@@ -89,7 +89,7 @@ def getLatestDownloadedFileName(downloadsDirPath):
 
 def sendChatworkNotification(message):
     try:
-        url = f'https://api.chatwork.com/v2/rooms/{os.environ["CHATWORK_ROOM_ID"]}/messages'
+        url = f'https://api.chatwork.com/v2/rooms/{os.environ["CHATWORK_ROOM_ID_BALANCE"]}/messages'
         headers = { 'X-ChatWorkToken': os.environ["CHATWORK_API_TOKEN"] }
         params = { 'body': message }
         requests.post(url, headers=headers, params=params)
@@ -149,19 +149,21 @@ if __name__ == '__main__':
 
         if len(data) == 0:
             message = "[info][title]【Yahoo!広告】デポジット残高通知[/title]"
-            message += "予想残日数が迫っているアカウントはありません。\n"
-            message += ""
+            message += "予想残日数が迫っているアカウントはございません。\n"
+            message += "さすがですね。[/info]"
 
-        message = "予想残日数が迫っているアカウントがあります。\n"
-        message += "ご担当者の方は下記アカウントの残高をご確認ください。\n\n"
+        message = "[info][title]【Yahoo!広告】デポジット残高通知[/title]"
+        message += f"予想残日数が迫っているアカウントが【{len(data)}件】あります。\n"
+        message += "ご担当者の方は下記アカウントの残高をご確認ください。\n"
         for item in data:
-            message += "[info][title]【Yahoo!広告】デポジット残高通知[/title]"
+            message += '\n＋＋＋\n\n'
             message += f'アカウントID：{item[0]}\n'
             message += f'アカウント名：{item[1]}\n'
             message += f'アカウント残高：{item[2]}\n'
             message += f'予想残日数：{item[3]}\n'
             message += f'平均コスト（日）：{item[4]}\n'
-            message += '[/info]'
+        
+        message += '[/info]'
 
         sendChatworkNotification(message)
         logger.info("check_yahoo_ad_balance: Finish")
