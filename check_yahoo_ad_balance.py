@@ -66,7 +66,7 @@ def importCsvFromYahoo(downloadsDirPath):
         driver.implicitly_wait(60)
         driver.find_element_by_xpath('//button[@class="css-1cqs7fo"]').click()
         driver.implicitly_wait(60)
-        driver.find_element_by_class_name('css-1ugv5lf').click()
+        driver.find_element_by_class_name('css-enbjm8').click()
         sleep(10)
         
         driver.close()
