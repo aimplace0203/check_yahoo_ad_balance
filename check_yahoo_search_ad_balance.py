@@ -144,22 +144,21 @@ if __name__ == '__main__':
         data = list(getBalanceData(data))
 
         if len(data) == 0:
-            message = "[info][title]【Yahoo!広告】デポジット残高通知[/title]"
+            message = "[info][title]【Yahoo!検索広告】アカウント残高通知[/title]"
             message += "予想残日数が迫っているアカウントはございません。\n"
-            message += "さすがですね。[/info]"
-
-        message = "[info][title]【Yahoo!広告】デポジット残高通知[/title]"
-        message += f"予想残日数が迫っているアカウントが【{len(data)}件】あります。\n"
-        message += "ご担当者の方は下記アカウントの残高をご確認ください。\n"
-        for item in data:
-            message += '\n＋＋＋\n\n'
-            message += f'アカウントID：{item[0]}\n'
-            message += f'アカウント名：{item[1]}\n'
-            message += f'アカウント残高：{item[2]}\n'
-            message += f'予想残日数：{item[3]}\n'
-            message += f'平均コスト（日）：{item[4]}\n'
-        
-        message += '[/info]'
+            message += '[/info]'
+        else:
+            message = "[info][title]【Yahoo!検索広告】アカウント残高通知[/title]"
+            message += f"予想残日数が迫っているアカウントが【{len(data)}件】あります。\n"
+            message += "ご担当者の方は下記アカウントの残高をご確認ください。\n"
+            for item in data:
+                message += '\n＋＋＋\n\n'
+                message += f'アカウントID：{item[0]}\n'
+                message += f'アカウント名：{item[1]}\n'
+                message += f'アカウント残高：{item[2]}\n'
+                message += f'予想残日数：{item[3]}\n'
+                message += f'平均コスト（日）：{item[4]}\n'
+            message += '[/info]'
 
         sendChatworkNotification(message)
         logger.info("check_yahoo_ad_balance: Finish")
