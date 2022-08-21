@@ -118,7 +118,7 @@ if __name__ == '__main__':
             message += '[/info]'
         else:
             message = "[info][title]【Yahoo!ディスプレイ広告】アカウント残高通知[/title]"
-            message += f"残高が少なくなってきているアカウントが【{len(data)}件】あります。\n"
+            message += f"残高が少なくなってきているアカウントが【{len(output)}件】あります。\n"
             message += "ご担当者の方は下記アカウントの残高をご確認ください。\n"
             for item in output:
                 message += '\n＋＋＋\n\n'
