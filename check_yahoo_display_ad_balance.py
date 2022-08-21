@@ -112,7 +112,7 @@ if __name__ == '__main__':
             if int(d['balance']) <= 30000:
                 output.append(d)
 
-        if len(data) == 0:
+        if len(output) == 0:
             message = "[info][title]【Yahoo!ディスプレイ広告】アカウント残高通知[/title]"
             message += "アラート対象のアカウントはございません。\n"
             message += '[/info]'
@@ -120,13 +120,11 @@ if __name__ == '__main__':
             message = "[info][title]【Yahoo!ディスプレイ広告】アカウント残高通知[/title]"
             message += f"残高が少なくなってきているアカウントが【{len(data)}件】あります。\n"
             message += "ご担当者の方は下記アカウントの残高をご確認ください。\n"
-            for item in data:
+            for item in output:
                 message += '\n＋＋＋\n\n'
-                message += f'アカウントID：{item['account_id']}\n'
-                message += f'アカウント名：{item['account_name']}\n'
-                message += f'アカウント残高：{item['balance']}\n'
-                #message += f'予想残日数：{item[3]}\n'
-                #message += f'平均コスト（日）：{item[4]}\n'
+                message += f"アカウントID：{item['account_id']}\n"
+                message += f"アカウント名：{item['account_name']}\n"
+                message += f"アカウント残高：{'{:,}'.format(int(item['balance']))}\n"
             message += '[/info]'
 
         sendChatworkNotification(message)
