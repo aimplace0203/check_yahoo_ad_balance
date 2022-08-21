@@ -65,7 +65,6 @@ def getAvailableBalance(account_id):
             message += f'アカウントID：{account_id}\n\n'
             message += f'ステータスコード：{req.status_code}\n\n'
             sendChatworkNotification(message)
-            print(message)
             exit(0)
 
         if body['errors'] != None:

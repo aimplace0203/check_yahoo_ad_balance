@@ -124,7 +124,7 @@ def getBalanceData(data):
                 continue
             elif row[cost] == "0":
                 continue
-            elif int(row[dl]) > 2:
+            elif int(row[dl].replace(',', '')) > 2:
                 continue
             yield [row[account_id], row[name], row[balance], row[dl], row[cost]]
 
