@@ -72,8 +72,11 @@ def importCsvFromYahoo(downloadsDirPath):
         driver.close()
         driver.quit()
     except Exception as err:
+        driver.close()
+        driver.quit()
         logger.debug(f'Error: importCsvFromYahoo: {err}')
-        exit(1)
+        sleep(10)
+        importCsvFromYahoo(downloadsDirPath)
 
 def getLatestDownloadedFileName(downloadsDirPath):
     if len(os.listdir(downloadsDirPath)) == 0:
@@ -162,6 +165,8 @@ if __name__ == '__main__':
 
         sendChatworkNotification(message)
         logger.info("check_yahoo_ad_balance: Finish")
+        os.remove(csvPath)
+        os.remove(f'log/{today.strftime("%Y-%m-%d")}_result.log')
         exit(0)
     except Exception as err:
         logger.debug(f'check_yahoo_ad_balance: {err}')
