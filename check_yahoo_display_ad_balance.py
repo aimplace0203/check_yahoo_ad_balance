@@ -130,9 +130,9 @@ if __name__ == '__main__':
             message += '[/info]'
 
         sendChatworkNotification(message)
-        os.remove(f'log/{today.strftime("%Y-%m-%d")}_result.log')
         logger.info("check_yahoo_ad_balance: Finish")
-        exit(0)
+        handler.close()
+        os.remove(f'log/{today.strftime("%Y-%m-%d")}_result.log')
     except Exception as err:
         logger.debug(f'check_yahoo_ad_balance: {err}')
         exit(1)

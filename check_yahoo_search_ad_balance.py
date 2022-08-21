@@ -166,6 +166,7 @@ if __name__ == '__main__':
         sendChatworkNotification(message)
         logger.info("check_yahoo_ad_balance: Finish")
         os.remove(csvPath)
+        handler.close()
         os.remove(f'log/{today.strftime("%Y-%m-%d")}_result.log')
         exit(0)
     except Exception as err:
