@@ -80,6 +80,12 @@ def importCsvFromYahoo(downloadsDirPath):
         driver.close()
         driver.quit()
         logger.debug(f'Error: importCsvFromYahoo: {err}')
+        message = "[toall]\n"
+        message += "アカウント残高の取得に失敗しました。\n"
+        message += "Yahoo!広告のWebサイト上の仕様が変更した可能性があります。\n"
+        message += "システム担当者は実行ログの確認を行ってください。\n"
+        message += "システムが復旧するまで、広告運用担当者は目視で残高の確認を行ってください。\n"
+        sendChatworkNotification(message)
         exit(1)
 
 def getLatestDownloadedFileName(downloadsDirPath):
@@ -92,10 +98,10 @@ def getLatestDownloadedFileName(downloadsDirPath):
 
 def sendChatworkNotification(message):
     try:
-        #url = f'https://api.chatwork.com/v2/rooms/{os.environ["CHATWORK_ROOM_ID_BALANCE"]}/messages'
+        url = f'https://api.chatwork.com/v2/rooms/{os.environ["CHATWORK_ROOM_ID_BALANCE"]}/messages'
         headers = { 'X-ChatWorkToken': os.environ["CHATWORK_API_TOKEN"] }
         params = { 'body': message }
-        #requests.post(url, headers=headers, params=params)
+        requests.post(url, headers=headers, params=params)
     except Exception as err:
         logger.error(f'Error: sendChatworkNotification: {err}')
         exit(1)
