@@ -32,7 +32,12 @@ def importCsvFromYahoo(downloadsDirPath):
     login = os.environ['YAHOO_BUSINESS_ID']
     password = os.environ['YAHOO_BUSINESS_PASS']
 
-    options = uc.ChromeOptions()
+    ua = UserAgent()
+    logger.debug(f'importCsvFromAfb: UserAgent: {ua.chrome}')
+
+    options = Options()
+    options.add_argument(f'user-agent={ua.chrome}')
+
     prefs = {
         "profile.default_content_settings.popups": 1,
         "download.default_directory": 
@@ -42,8 +47,7 @@ def importCsvFromYahoo(downloadsDirPath):
     options.add_experimental_option("prefs", prefs)
     
     try:
-        #driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-        driver = uc.Chrome( options=options )
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
         sleep(3)
 
         driver.get(url)
