@@ -1,21 +1,19 @@
 import os
 import re
 import csv
-import sys
-import json
-import shutil
 import datetime
 import requests
-import gspread
+import undetected_chromedriver as uc
 from time import sleep
-from bs4 import BeautifulSoup
+from IPython import embed
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome import service as fs
 from fake_useragent import UserAgent
 from webdriver_manager.chrome import ChromeDriverManager
-from oauth2client.service_account import ServiceAccountCredentials
 
 # Logger setting
 from logging import getLogger, FileHandler, DEBUG
@@ -34,12 +32,7 @@ def importCsvFromYahoo(downloadsDirPath):
     login = os.environ['YAHOO_BUSINESS_ID']
     password = os.environ['YAHOO_BUSINESS_PASS']
 
-    ua = UserAgent()
-    logger.debug(f'importCsvFromYahoo: UserAgent: {ua.chrome}')
-
-    options = Options()
-    options.add_argument(f'user-agent={ua.chrome}')
-
+    options = uc.ChromeOptions()
     prefs = {
         "profile.default_content_settings.popups": 1,
         "download.default_directory": 
@@ -49,16 +42,24 @@ def importCsvFromYahoo(downloadsDirPath):
     options.add_experimental_option("prefs", prefs)
     
     try:
-        driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+        #driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+        driver = uc.Chrome( options=options )
+        sleep(3)
 
         driver.get(url)
         driver.maximize_window()
-        driver.implicitly_wait(30)
+        sleep(2)
 
-        driver.find_element_by_class_name('loginBt').click()
-        driver.find_element_by_id('user_name').send_keys(login)
-        driver.find_element_by_id('password').send_keys(password)
-        driver.find_element_by_xpath('//input[@value="ログイン"]').click()
+        driver.get("https://login.bizmanager.yahoo.co.jp/yidlogin?.scrumb=0")
+        driver.find_element(By.ID, 'login_handle').send_keys(login)
+        sleep(3)
+        login_form = driver.find_element(By.NAME, 'login_form')
+        login_form.find_element(By.TAG_NAME, 'button').click()
+
+        sleep(3)
+        driver.implicitly_wait(30)
+        driver.find_element(By.ID, 'password').send_keys(password)
+        driver.find_element(By.XPATH, '//button[@type="submit"]').click()
 
         logger.debug('importCsvFromYahoo: Yahoo login')
         sleep(10)
@@ -75,8 +76,7 @@ def importCsvFromYahoo(downloadsDirPath):
         driver.close()
         driver.quit()
         logger.debug(f'Error: importCsvFromYahoo: {err}')
-        sleep(10)
-        importCsvFromYahoo(downloadsDirPath)
+        exit(1)
 
 def getLatestDownloadedFileName(downloadsDirPath):
     if len(os.listdir(downloadsDirPath)) == 0:
@@ -88,10 +88,10 @@ def getLatestDownloadedFileName(downloadsDirPath):
 
 def sendChatworkNotification(message):
     try:
-        url = f'https://api.chatwork.com/v2/rooms/{os.environ["CHATWORK_ROOM_ID_BALANCE"]}/messages'
+        #url = f'https://api.chatwork.com/v2/rooms/{os.environ["CHATWORK_ROOM_ID_BALANCE"]}/messages'
         headers = { 'X-ChatWorkToken': os.environ["CHATWORK_API_TOKEN"] }
         params = { 'body': message }
-        requests.post(url, headers=headers, params=params)
+        #requests.post(url, headers=headers, params=params)
     except Exception as err:
         logger.error(f'Error: sendChatworkNotification: {err}')
         exit(1)
@@ -151,7 +151,8 @@ if __name__ == '__main__':
             message += "予想残日数が迫っているアカウントはございません。\n"
             message += '[/info]'
         else:
-            message = "[info][title]【Yahoo!検索広告】アカウント残高通知[/title]"
+            message = "[toall]\n"
+            message += "[info][title]【Yahoo!検索広告】アカウント残高通知[/title]"
             message += f"予想残日数が迫っているアカウントが【{len(data)}件】あります。\n"
             message += "ご担当者の方は下記アカウントの残高をご確認ください。\n"
             for item in data:
@@ -171,4 +172,9 @@ if __name__ == '__main__':
         exit(0)
     except Exception as err:
         logger.debug(f'check_yahoo_ad_balance: {err}')
+        message = "[toall]\n"
+        message += "アカウント残高の取得に失敗しました。\n"
+        message += "システム担当者は実行ログの確認を行ってください。\n"
+        message += "システムが復旧するまで、広告運用担当者は目視で残高の確認を行ってください。\n"
+        sendChatworkNotification(message)
         exit(1)
