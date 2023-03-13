@@ -136,6 +136,8 @@ def getBalanceData(data):
                 continue
             elif int(row[dl].replace(',', '')) > 2:
                 continue
+            elif int(row[balance]).replace(',', '') / int(row[cost].replace(',', '')) > 3:
+                continue
             yield [row[account_id], row[name], row[balance], row[dl], row[cost]]
 
 def getCsvPath(dirPath):
